@@ -128,6 +128,7 @@ function validateCartQuantity(quantity) {
 function generateOrderId() {
   // 請實作此函式
   // 提示：可以用 Date.now().toString(36) + Math.random().toString(36).slice(2)
+  return `ORD-${Date.now.toString(36)}${Math.random().toString(36).slice(2)}`
 }
 
 /**
@@ -136,6 +137,7 @@ function generateOrderId() {
  */
 function generateCartItemId() {
   // 請實作此函式
+  return `CART-${Date.now.toString(36)}${Math.random().toString(36).slice(2)}`
 }
 
 // ========================================
