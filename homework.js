@@ -77,6 +77,18 @@ function getThisWeekOrders(orders) {
  */
 function validateOrderUser(data) {
   // 請實作此函式
+  const rules = [
+    {field: "name", isValid: data.name.trim().length > 0},
+    {field: "tel", isValid: /^09\d{8}$/.test(data.tel)},
+    {field: "email", isValid: data.email.trim().includes("@")},
+    {field: "address", isValid: data.address.trim().length > 0},
+    {field: "payment", isValid: ['ATM', 'Credit Card', 'Apple Pay'].includes(data.payment)}
+  ]
+  const errors = rules.filter(item => !item.isValid )
+  return {
+    isValid: errors.length === 0,
+    errors: errors.map(item => item.field)
+  }
 }
 
 /**
@@ -91,6 +103,18 @@ function validateOrderUser(data) {
  */
 function validateCartQuantity(quantity) {
   // 請實作此函式
+  if(!Number.isInteger(quantity)){
+    return {isValid:false, error:"必須是整數"}
+  }
+  if(quantity < 1){
+    return {isValid:false, error:"不可小於 1"}
+  }
+  if(quantity >99){
+    return {isValid: false, error:"不可大於99"}
+  }
+  return {
+    isValid: true,
+  }
 }
 
 // ========================================
