@@ -152,6 +152,12 @@ async function getProductsWithAxios() {
   // 請實作此函式
   // 提示：axios.get() 會自動解析 JSON，不需要 .json()
   // 回傳 response.data.products
+  try{
+    const res = await axios.get(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/products`)
+    return res.data.products
+  } catch(error){
+    console.error(error)
+  }
 }
 
 /**
@@ -163,6 +169,16 @@ async function getProductsWithAxios() {
 async function addToCartWithAxios(productId, quantity) {
   // 請實作此函式
   // 提示：axios.post(url, data) 會自動設定 Content-Type
+  const payload = {
+    productId,
+    quantity
+  }
+  try {
+    const res = await axios.post(`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`, { data: payload })
+    return res.data
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 /**
@@ -172,16 +188,22 @@ async function addToCartWithAxios(productId, quantity) {
 async function getOrdersWithAxios() {
   // 請實作此函式
   // 提示：axios.get(url, { headers: { authorization: token } })
+  try {
+    const res = await axios.get(`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders`, { headers: { authorization: ADMIN_TOKEN }})
+    return res.data.orders
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 /*
 比較題：請說明 fetch 和 axios 的主要差異
 
-1. ____________________________________
+1. axios會自動轉換回傳資料，fetch需要手動使用.json()方法
 
-2. ____________________________________
+2. axios非2XX的回應都會進到catch裡，fetch只有網路斷線、DNS錯誤等這種型態的錯誤才會進到catch，其餘4XX或5XX的狀態要用!response.ok來進行額外判斷
 
-3. ____________________________________
+3. axios有封裝許多方法可以使用，例如：timeout設定、請求攔截等，但是fetch的話要自行封裝函式
 */
 
 // ========================================
@@ -202,6 +224,12 @@ const OrderService = {
    */
   async fetchOrders() {
     // 請實作此函式
+    try {
+    const res = await axios.get(`${this.baseURL}/api/livejs/v1/admin/${this.apiPath}/orders`, { headers: { authorization: this.token }})
+      return res.data.orders
+    } catch (error) {
+      console.error(error)
+    }
   },
 
   /**
@@ -210,7 +238,12 @@ const OrderService = {
    * @returns {Array} - 為每筆訂單加上 formattedDate 欄位
    */
   formatOrders(orders) {
-    // 請實作此函式
+    return orders.map(order => {
+      return {
+        ...order,
+        formattedDate: dayjs.unix(order.createdAt).format("YYYY-MM-DD HH:mm:ss")
+      }
+    })
   },
 
   /**
@@ -219,7 +252,7 @@ const OrderService = {
    * @returns {Array} - paid: false 的訂單
    */
   filterUnpaidOrders(orders) {
-    // 請實作此函式
+    return orders.filter(order => !order.paid)
   },
 
   /**
